@@ -24,10 +24,10 @@ public class Beer {
     private String brand;
 
     @Column(nullable = false)
-    private int max;
+    private Integer max;
 
     @Column(nullable = false)
-    private int quantity;
+    private Integer quantity;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
