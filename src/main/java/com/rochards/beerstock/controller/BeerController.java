@@ -1,6 +1,6 @@
 package com.rochards.beerstock.controller;
 
-import com.rochards.beerstock.entity.Beer;
+import com.rochards.beerstock.dto.BeerDTO;
 import com.rochards.beerstock.service.BeerService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class BeerController {
     private final BeerService beerService;
 
     @GetMapping
-    public List<Beer> listAll() {
+    public List<BeerDTO> listAll() {
         return beerService.listAll();
     }
 }
