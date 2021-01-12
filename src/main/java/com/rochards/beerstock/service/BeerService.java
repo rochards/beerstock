@@ -23,4 +23,11 @@ public class BeerService {
                 .stream().map(beerMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    public BeerDTO create(BeerDTO beerDTO) {
+        Beer beer = beerMapper.toModel(beerDTO);
+        Beer createdBeer = beerRepository.save(beer);
+
+        return beerMapper.toDTO(createdBeer);
+    }
 }
