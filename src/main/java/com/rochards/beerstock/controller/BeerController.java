@@ -25,11 +25,20 @@ public class BeerController {
         return ResponseEntity.ok(beers);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/{id}")
+    public ResponseEntity<BeerDTO> findById(@PathVariable Long id) {
+        BeerDTO beerDTO = beerService.findById(id);
+        if (beerDTO != null) {
+            return ResponseEntity.ok(beerDTO);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/name/{name}")
     public ResponseEntity<BeerDTO> findByName(@PathVariable String name) {
-        BeerDTO beer = beerService.findByName(name);
-        if (beer != null) {
-            return ResponseEntity.ok(beer);
+        BeerDTO beerDTO = beerService.findByName(name);
+        if (beerDTO != null) {
+            return ResponseEntity.ok(beerDTO);
         }
         return ResponseEntity.noContent().build();
     }

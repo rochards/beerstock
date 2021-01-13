@@ -26,6 +26,11 @@ public class BeerService {
                 .collect(Collectors.toList());
     }
 
+    public BeerDTO findById(Long id) {
+        Optional<Beer> beer = beerRepository.findById(id);
+        return beer.map(beerMapper::toDTO).orElse(null);
+    }
+
     public BeerDTO findByName(String beerName) {
         Optional<Beer> beer = beerRepository.findByName(beerName);
         return beer.map(beerMapper::toDTO).orElse(null);
