@@ -25,6 +25,15 @@ public class BeerController {
         return ResponseEntity.ok(beers);
     }
 
+    @GetMapping("/{name}")
+    public ResponseEntity<BeerDTO> findByName(@PathVariable String name) {
+        BeerDTO beer = beerService.findByName(name);
+        if (beer != null) {
+            return ResponseEntity.ok(beer);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping
     public ResponseEntity<BeerDTO> create(@Valid @RequestBody BeerDTO beerDTO) {
         BeerDTO createdBeer = beerService.create(beerDTO);
