@@ -2,6 +2,7 @@ package com.rochards.beerstock.service;
 
 import com.rochards.beerstock.dto.BeerDTO;
 import com.rochards.beerstock.entity.Beer;
+import com.rochards.beerstock.exception.type.BeerAlreadyExistException;
 import com.rochards.beerstock.mapper.BeerMapper;
 import com.rochards.beerstock.repository.BeerRepository;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,9 +27,18 @@ public class BeerService {
     }
 
     public BeerDTO create(BeerDTO beerDTO) {
+        checkIfAlreadyExist(beerDTO.getName());
+
         Beer beer = beerMapper.toModel(beerDTO);
         Beer createdBeer = beerRepository.save(beer);
 
         return beerMapper.toDTO(createdBeer);
+    }
+
+    private void checkIfAlreadyExist(String beerName) {
+        Optional<Beer> beer = beerRepository.findByName(beerName);
+        if (beer.isPresent()) {
+            throw new BeerAlreadyExistException(beerName);
+        }
     }
 }
