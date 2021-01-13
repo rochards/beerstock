@@ -15,9 +15,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import java.util.Optional;
+
 import static com.rochards.beerstock.utils.JSONConversionUtils.asJSONString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,5 +79,23 @@ public class BeerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJSONString(beerDTO))) // asJSONString was created by me
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void whenGETIsCalledWithRegisteredNameThenOkStatusIsReturned() throws Exception {
+        // given
+        BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+
+        // when
+        when(beerService.findByName(beerDTO.getName())).thenReturn(Optional.of(beerDTO));
+
+        // then
+        mockMvc.perform(get(BEER_API_URL_PATH + "/name/" + beerDTO.getName())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJSONString(beerDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is(beerDTO.getName())))
+                .andExpect(jsonPath("$.brand", is(beerDTO.getBrand())))
+                .andExpect(jsonPath("$.type", is(beerDTO.getType().toString())));
     }
 }
