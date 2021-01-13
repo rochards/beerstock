@@ -68,7 +68,7 @@ public class BeerServiceTest {
     }
 
     @Test
-    public void whenValidBeerNameIsInformedThenShouldReturnABeer() {
+    public void whenRegisteredBeerNameIsInformedThenShouldReturnABeer() {
         // given
         BeerDTO expectedFoundBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
         Beer expectedFoundBeer = beerMapper.toModel(expectedFoundBeerDTO);
