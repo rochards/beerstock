@@ -81,4 +81,15 @@ public class BeerServiceTest {
 
         assertThat(foundBeerDTO.get(), is(equalTo(expectedFoundBeerDTO)));
     }
+
+    @Test
+    public void whenNoRegisteredBeerNameIsInformedThenShouldReturnABeer() {
+        BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+
+        Mockito.when(beerRepository.findByName(beerDTO.getName())).thenReturn(Optional.empty());
+
+        Optional<BeerDTO> foundBeerDTO = beerService.findByName(beerDTO.getName());
+
+        assertThat(foundBeerDTO.isEmpty(), is(equalTo(true)));
+    }
 }
