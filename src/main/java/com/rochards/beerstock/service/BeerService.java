@@ -27,14 +27,14 @@ public class BeerService {
                 .collect(Collectors.toList());
     }
 
-    public BeerDTO findById(Long id) {
+    public Optional<BeerDTO> findById(Long id) {
         Optional<Beer> beer = beerRepository.findById(id);
-        return beer.map(beerMapper::toDTO).orElse(null);
+        return beer.map(beerMapper::toDTO);
     }
 
-    public BeerDTO findByName(String beerName) {
+    public Optional<BeerDTO> findByName(String beerName) {
         Optional<Beer> beer = beerRepository.findByName(beerName);
-        return beer.map(beerMapper::toDTO).orElse(null);
+        return beer.map(beerMapper::toDTO);
     }
 
     public BeerDTO create(BeerDTO beerDTO) {

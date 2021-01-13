@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/beers")
@@ -27,20 +28,14 @@ public class BeerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<BeerDTO> findById(@PathVariable Long id) {
-        BeerDTO beerDTO = beerService.findById(id);
-        if (beerDTO != null) {
-            return ResponseEntity.ok(beerDTO);
-        }
-        return ResponseEntity.notFound().build();
+        Optional<BeerDTO> beerDTO = beerService.findById(id);
+        return beerDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/name/{name}")
     public ResponseEntity<BeerDTO> findByName(@PathVariable String name) {
-        BeerDTO beerDTO = beerService.findByName(name);
-        if (beerDTO != null) {
-            return ResponseEntity.ok(beerDTO);
-        }
-        return ResponseEntity.notFound().build();
+        Optional<BeerDTO> beerDTO = beerService.findByName(name);
+        return beerDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
