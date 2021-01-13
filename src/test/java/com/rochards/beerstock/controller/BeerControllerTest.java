@@ -98,4 +98,15 @@ public class BeerControllerTest {
                 .andExpect(jsonPath("$.brand", is(beerDTO.getBrand())))
                 .andExpect(jsonPath("$.type", is(beerDTO.getType().toString())));
     }
+
+    @Test
+    public void whenGETIsCalledWithNoRegisteredNameThenNotFoundStatusIsReturned() throws Exception {
+        BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+
+        when(beerService.findByName(beerDTO.getName())).thenReturn(Optional.empty());
+
+        mockMvc.perform(get(BEER_API_URL_PATH + "/name/" + beerDTO.getName())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 }
