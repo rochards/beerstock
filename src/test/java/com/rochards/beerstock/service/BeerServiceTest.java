@@ -66,4 +66,19 @@ public class BeerServiceTest {
         // then
         Assertions.assertThrows(BeerAlreadyExistException.class, () -> beerService.create(expectedBeerDTO));
     }
+
+    @Test
+    public void whenValidBeerNameIsInformedThenShouldReturnABeer() {
+        // given
+        BeerDTO expectedFoundBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+        Beer expectedFoundBeer = beerMapper.toModel(expectedFoundBeerDTO);
+
+        // when
+        Mockito.when(beerRepository.findByName(expectedFoundBeer.getName())).thenReturn(Optional.of(expectedFoundBeer));
+
+        //then
+        Optional<BeerDTO> foundBeerDTO = beerService.findByName(expectedFoundBeer.getName());
+
+        assertThat(foundBeerDTO.get(), is(equalTo(expectedFoundBeerDTO)));
+    }
 }
