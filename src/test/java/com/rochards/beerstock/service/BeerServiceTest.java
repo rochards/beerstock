@@ -3,6 +3,7 @@ package com.rochards.beerstock.service;
 import com.rochards.beerstock.builder.BeerDTOBuilder;
 import com.rochards.beerstock.dto.BeerDTO;
 import com.rochards.beerstock.entity.Beer;
+import com.rochards.beerstock.exception.type.BeerAlreadyExistException;
 import com.rochards.beerstock.mapper.BeerMapper;
 import com.rochards.beerstock.repository.BeerRepository;
 import org.junit.jupiter.api.Assertions;
@@ -50,5 +51,19 @@ public class BeerServiceTest {
 
         /* utilizando o Assertions do JUnit
         Assertions.assertEquals(expectedBeerDTO, createdBeerDTO);*/
+    }
+
+    @Test
+    public void whenAnAlreadyExistentBeerInformedThenAnExceptionShouldBeThrown() {
+        // given
+        BeerDTO expectedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+        Beer duplicatedBeer = beerMapper.toModel(expectedBeerDTO);
+
+        // when
+        // mockando uma beer ja existent
+        Mockito.when(beerRepository.findByName(expectedBeerDTO.getName())).thenReturn(Optional.of(duplicatedBeer));
+
+        // then
+        Assertions.assertThrows(BeerAlreadyExistException.class, () -> beerService.create(expectedBeerDTO));
     }
 }
