@@ -31,7 +31,7 @@ public class BeerController {
         if (beerDTO != null) {
             return ResponseEntity.ok(beerDTO);
         }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/name/{name}")
@@ -40,12 +40,18 @@ public class BeerController {
         if (beerDTO != null) {
             return ResponseEntity.ok(beerDTO);
         }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
     public ResponseEntity<BeerDTO> create(@Valid @RequestBody BeerDTO beerDTO) {
         BeerDTO createdBeer = beerService.create(beerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBeer);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        beerService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

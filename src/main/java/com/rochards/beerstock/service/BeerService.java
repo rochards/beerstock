@@ -3,6 +3,7 @@ package com.rochards.beerstock.service;
 import com.rochards.beerstock.dto.BeerDTO;
 import com.rochards.beerstock.entity.Beer;
 import com.rochards.beerstock.exception.type.BeerAlreadyExistException;
+import com.rochards.beerstock.exception.type.BeerNotFoundException;
 import com.rochards.beerstock.mapper.BeerMapper;
 import com.rochards.beerstock.repository.BeerRepository;
 import lombok.AllArgsConstructor;
@@ -45,10 +46,22 @@ public class BeerService {
         return beerMapper.toDTO(createdBeer);
     }
 
+    public void delete(Long id) {
+        checkIfAlreadyExist(id);
+        beerRepository.deleteById(id);
+    }
+
     private void checkIfAlreadyExist(String beerName) {
         Optional<Beer> beer = beerRepository.findByName(beerName);
         if (beer.isPresent()) {
             throw new BeerAlreadyExistException(beerName);
+        }
+    }
+
+    private void checkIfAlreadyExist(Long id) {
+        boolean exists = beerRepository.existsById(id);
+        if (!exists) {
+            throw new BeerNotFoundException(id);
         }
     }
 }

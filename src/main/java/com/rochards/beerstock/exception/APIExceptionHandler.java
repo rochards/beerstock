@@ -1,6 +1,7 @@
 package com.rochards.beerstock.exception;
 
 import com.rochards.beerstock.exception.type.BeerAlreadyExistException;
+import com.rochards.beerstock.exception.type.BeerNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,17 @@ public class APIExceptionHandler {
 
         var status = HttpStatus.BAD_REQUEST;
         String error = ex.getMessage();
-        APIError apiError = new APIError(OffsetDateTime.now(), status.value(), ex.getLocalizedMessage());
+        APIError apiError = new APIError(OffsetDateTime.now(), status.value(), error);
+
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), status);
+    }
+
+    @ExceptionHandler(BeerNotFoundException.class)
+    public ResponseEntity<Object> handleBeerNotFoundException(BeerNotFoundException ex, WebRequest request) {
+
+        var status = HttpStatus.BAD_REQUEST;
+        String error = ex.getMessage();
+        APIError apiError = new APIError(OffsetDateTime.now(), status.value(), error);
 
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), status);
     }
