@@ -2,9 +2,9 @@ package com.rochards.beerstock.controller;
 
 import com.rochards.beerstock.builder.BeerDTOBuilder;
 import com.rochards.beerstock.dto.BeerDTO;
-import com.rochards.beerstock.entity.Beer;
+import com.rochards.beerstock.exception.APIExceptionHandler;
+import com.rochards.beerstock.exception.type.BeerNotFoundException;
 import com.rochards.beerstock.service.BeerService;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,6 +48,8 @@ public class BeerControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(beerController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .setViewResolvers((s, locale) -> new MappingJackson2JsonView())
+                .setControllerAdvice(APIExceptionHandler.class) // importante informar as classes das excecoes, se
+                // nao os testes que as retornam, nao funciona
                 .build();
     }
 
@@ -156,5 +158,14 @@ public class BeerControllerTest {
         mockMvc.perform(delete(BEER_API_URL_PATH + "/" + VALID_BEER_ID)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void whenDELETEIsCalledWithNoRegisteredIdThenAnErrorIsReturned() throws Exception {
+        doThrow(BeerNotFoundException.class).when(beerService).delete(INVALID_BEER_ID);
+
+        mockMvc.perform(delete(BEER_API_URL_PATH + "/" + INVALID_BEER_ID)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }
