@@ -2,7 +2,9 @@ package com.rochards.beerstock.controller;
 
 import com.rochards.beerstock.builder.BeerDTOBuilder;
 import com.rochards.beerstock.dto.BeerDTO;
+import com.rochards.beerstock.entity.Beer;
 import com.rochards.beerstock.service.BeerService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.rochards.beerstock.utils.JSONConversionUtils.asJSONString;
@@ -131,5 +134,19 @@ public class BeerControllerTest {
         mockMvc.perform(get(BEER_API_URL_PATH + "/" + beerDTO.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void whenGETListOfBeersIsCalledThenOkStatusIsReturned() throws Exception {
+        BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+
+        when(beerService.listAll()).thenReturn(Collections.singletonList(beerDTO));
+
+        mockMvc.perform(get(BEER_API_URL_PATH)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name", is(beerDTO.getName())))
+                .andExpect(jsonPath("$[0].brand", is(beerDTO.getBrand())))
+                .andExpect(jsonPath("$[0].type", is(beerDTO.getType().toString())));
     }
 }
