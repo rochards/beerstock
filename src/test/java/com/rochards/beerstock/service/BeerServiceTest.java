@@ -4,6 +4,7 @@ import com.rochards.beerstock.builder.BeerDTOBuilder;
 import com.rochards.beerstock.dto.BeerDTO;
 import com.rochards.beerstock.entity.Beer;
 import com.rochards.beerstock.exception.type.BeerAlreadyExistException;
+import com.rochards.beerstock.exception.type.BeerNotFoundException;
 import com.rochards.beerstock.mapper.BeerMapper;
 import com.rochards.beerstock.repository.BeerRepository;
 import org.junit.jupiter.api.Assertions;
@@ -25,7 +26,7 @@ import static org.hamcrest.Matchers.*;
 public class BeerServiceTest {
 
     private static final long INVALID_BEER_ID = 1L;
-    private BeerMapper beerMapper = BeerMapper.INSTANCE;
+    private final BeerMapper beerMapper = BeerMapper.INSTANCE;
 
     @Mock
     private BeerRepository beerRepository;
@@ -153,5 +154,14 @@ public class BeerServiceTest {
         // como beerService.delete retorna nada, preciso confirmar se os metodos abaixo foram chamados
         Mockito.verify(beerRepository, Mockito.times(1)).existsById(expectedDeletedBeer.getId());
         Mockito.verify(beerRepository, Mockito.times(1)).deleteById(expectedDeletedBeer.getId());
+    }
+
+    @Test
+    public void whenExclusionIsCalledWithNoRegisteredBeerIdThenAnExceptionShouldBeThrown() {
+        long noExistentId = 1L;
+
+        Mockito.when(beerRepository.existsById(noExistentId)).thenReturn(false);
+
+        Assertions.assertThrows(BeerNotFoundException.class, () -> beerService.delete(noExistentId));
     }
 }
