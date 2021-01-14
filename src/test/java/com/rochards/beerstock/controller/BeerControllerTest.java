@@ -22,8 +22,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BeerControllerTest {
@@ -108,5 +107,18 @@ public class BeerControllerTest {
         mockMvc.perform(get(BEER_API_URL_PATH + "/name/" + beerDTO.getName())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void whenGETIsCalledWithRegisteredIdThenOkStatusIsReturned() throws Exception {
+        BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+
+        when(beerService.findById(beerDTO.getId())).thenReturn(Optional.of(beerDTO));
+
+        mockMvc.perform(get(BEER_API_URL_PATH + "/" + beerDTO.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJSONString(beerDTO)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(asJSONString(beerDTO)));
     }
 }
