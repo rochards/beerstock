@@ -2,6 +2,7 @@ package com.rochards.beerstock.exception;
 
 import com.rochards.beerstock.exception.type.BeerAlreadyExistException;
 import com.rochards.beerstock.exception.type.BeerNotFoundException;
+import com.rochards.beerstock.exception.type.BeerStockExceededException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,16 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
         APIError apiError = new APIError(OffsetDateTime.now(), status.value(), error);
 
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), status);
+    }
+
+    @ExceptionHandler(BeerStockExceededException.class)
+    public ResponseEntity<Object> handleBeerStockExceededException(BeerStockExceededException ex, WebRequest request) {
+
+        var status = HttpStatus.BAD_REQUEST;
+        String error = ex.getMessage();
+        APIError apiError = new APIError(OffsetDateTime.now(), status.value(), error);
+
+        return new ResponseEntity<>(apiError, new HttpHeaders(), status);
     }
 
     @Override

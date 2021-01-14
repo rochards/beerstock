@@ -4,6 +4,7 @@ import com.rochards.beerstock.dto.BeerDTO;
 import com.rochards.beerstock.entity.Beer;
 import com.rochards.beerstock.exception.type.BeerAlreadyExistException;
 import com.rochards.beerstock.exception.type.BeerNotFoundException;
+import com.rochards.beerstock.exception.type.BeerStockExceededException;
 import com.rochards.beerstock.mapper.BeerMapper;
 import com.rochards.beerstock.repository.BeerRepository;
 import lombok.AllArgsConstructor;
@@ -51,6 +52,24 @@ public class BeerService {
         beerRepository.deleteById(id);
     }
 
+    public BeerDTO increment(Long id, int quantityToIncrement) {
+        Optional<Beer> optBeer = beerRepository.findById(id);
+        if (optBeer.isPresent()) {
+            Beer beerToIncrement = optBeer.get();
+
+            int finalQuantity = beerToIncrement.getQuantity() + quantityToIncrement;
+            if (finalQuantity <= beerToIncrement.getMax()) {
+                beerToIncrement.setQuantity(finalQuantity);
+                return beerMapper.toDTO(beerRepository.save(beerToIncrement));
+            }
+
+            throw new BeerStockExceededException(id, quantityToIncrement, beerToIncrement.getMax(),
+                    beerToIncrement.getQuantity());
+        }
+
+        throw new BeerNotFoundException(id);
+    }
+
     private void checkIfAlreadyExist(String beerName) {
         Optional<Beer> beer = beerRepository.findByName(beerName);
         if (beer.isPresent()) {
@@ -64,4 +83,5 @@ public class BeerService {
             throw new BeerNotFoundException(id);
         }
     }
+
 }
