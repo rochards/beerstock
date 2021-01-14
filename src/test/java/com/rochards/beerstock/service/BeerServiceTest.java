@@ -130,4 +130,13 @@ public class BeerServiceTest {
         assertThat(foundBeersDTO, is(not(empty())));
         assertThat(foundBeersDTO.get(0), is(equalTo(expectedFoundBeerDTO)));
     }
+
+    @Test
+    public void whenListBeerIsCalledThenReturnAnEmptyListOfBeers() {
+        Mockito.when(beerRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<BeerDTO> foundBeersDTO =  beerService.listAll();
+
+        assertThat(foundBeersDTO, is(empty()));
+    }
 }
