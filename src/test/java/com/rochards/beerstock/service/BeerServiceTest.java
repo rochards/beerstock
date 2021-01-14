@@ -139,4 +139,19 @@ public class BeerServiceTest {
 
         assertThat(foundBeersDTO, is(empty()));
     }
+
+    @Test
+    public void whenExclusionIsCalledWithRegisteredBeerIdThenItShouldBeDeleted() {
+        BeerDTO expectedDeletedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+        Beer expectedDeletedBeer = beerMapper.toModel(expectedDeletedBeerDTO);
+
+        Mockito.when(beerRepository.existsById(expectedDeletedBeer.getId())).thenReturn(true);
+        Mockito.doNothing().when(beerRepository).deleteById(expectedDeletedBeer.getId());
+
+        beerService.delete(expectedDeletedBeerDTO.getId());
+
+        // como beerService.delete retorna nada, preciso confirmar se os metodos abaixo foram chamados
+        Mockito.verify(beerRepository, Mockito.times(1)).existsById(expectedDeletedBeer.getId());
+        Mockito.verify(beerRepository, Mockito.times(1)).deleteById(expectedDeletedBeer.getId());
+    }
 }
