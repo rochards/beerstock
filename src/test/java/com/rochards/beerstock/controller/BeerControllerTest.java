@@ -121,4 +121,15 @@ public class BeerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(asJSONString(beerDTO)));
     }
+
+    @Test
+    public void whenGETIsCalledWithNoRegisteredIdThenNotFoundStatusIsReturned() throws Exception {
+        BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+
+        when(beerService.findById(beerDTO.getId())).thenReturn(Optional.empty());
+
+        mockMvc.perform(get(BEER_API_URL_PATH + "/" + beerDTO.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 }
