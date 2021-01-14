@@ -83,7 +83,7 @@ public class BeerServiceTest {
     }
 
     @Test
-    public void whenNoRegisteredBeerNameIsInformedThenShouldReturnABeer() {
+    public void whenNoRegisteredBeerNameIsInformedThenShouldReturnNothing() {
         BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
 
         Mockito.when(beerRepository.findByName(beerDTO.getName())).thenReturn(Optional.empty());
