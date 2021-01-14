@@ -23,8 +23,7 @@ import java.util.Optional;
 import static com.rochards.beerstock.utils.JSONConversionUtils.asJSONString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -148,5 +147,14 @@ public class BeerControllerTest {
                 .andExpect(jsonPath("$[0].name", is(beerDTO.getName())))
                 .andExpect(jsonPath("$[0].brand", is(beerDTO.getBrand())))
                 .andExpect(jsonPath("$[0].type", is(beerDTO.getType().toString())));
+    }
+
+    @Test
+    public void whenDELETEIsCalledWithRegisteredIdThenNoContentStatusIsReturned() throws Exception {
+        doNothing().when(beerService).delete(VALID_BEER_ID);
+
+        mockMvc.perform(delete(BEER_API_URL_PATH + "/" + VALID_BEER_ID)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 }
