@@ -4,6 +4,7 @@ import com.rochards.beerstock.builder.BeerDTOBuilder;
 import com.rochards.beerstock.dto.BeerDTO;
 import com.rochards.beerstock.exception.APIExceptionHandler;
 import com.rochards.beerstock.exception.type.BeerNotFoundException;
+import com.rochards.beerstock.exception.type.BeerStockExceededException;
 import com.rochards.beerstock.service.BeerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,8 +33,6 @@ public class BeerControllerTest {
     private static final String BEER_API_URL_PATH = "/api/v1/beers";
     private static final long VALID_BEER_ID = 1L;
     private static final long INVALID_BEER_ID = 2L;
-    private static final String BEER_API_SUBPATH_INCREMENT_URL = "/increment";
-    private static final String BEER_API_SUBPATH_DECREMENT_URL = "/decrement";
 
     private MockMvc mockMvc;
 
@@ -182,5 +181,20 @@ public class BeerControllerTest {
                 .content(asJSONString(quantityToIncrement)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(asJSONString(incrementedBeerDTO)));
+    }
+
+    @Test
+    public void whenPATCHIsCalledToIncrementGreaterThanMaxThenBadRequestStatusIsReturned() throws Exception {
+        BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+        int quantityToIncrement = 45;
+        beerDTO.setQuantity(beerDTO.getQuantity() + quantityToIncrement);
+
+        doThrow(BeerStockExceededException.class).when(beerService).increment(beerDTO.getId(),
+                quantityToIncrement);
+
+        mockMvc.perform(patch(BEER_API_URL_PATH + "/" + beerDTO.getId() + "/increment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJSONString(quantityToIncrement)))
+                .andExpect(status().isBadRequest());
     }
 }
