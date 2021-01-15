@@ -183,7 +183,7 @@ public class BeerServiceTest {
     }
 
     @Test
-    public void whenIncrementIsGreaterThanMaxThenAnExceptionShouldBeThrown() {
+    public void whenFinalQuantityIsGreaterThanMaxThenAnExceptionShouldBeThrown() {
         BeerDTO expectedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
         Beer expectedBeer = beerMapper.toModel(expectedBeerDTO);
 
