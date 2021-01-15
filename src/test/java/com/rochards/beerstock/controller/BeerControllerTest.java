@@ -2,6 +2,7 @@ package com.rochards.beerstock.controller;
 
 import com.rochards.beerstock.builder.BeerDTOBuilder;
 import com.rochards.beerstock.dto.BeerDTO;
+import com.rochards.beerstock.dto.QuantityDTO;
 import com.rochards.beerstock.exception.APIExceptionHandler;
 import com.rochards.beerstock.exception.type.BeerNotFoundException;
 import com.rochards.beerstock.exception.type.BeerStockExceededException;
@@ -170,31 +171,33 @@ public class BeerControllerTest {
 
     @Test
     public void whenPATCHIsCalledToIncrementThenOkStatusIsReturned() throws Exception {
-        BeerDTO incrementedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
         int quantityToIncrement = 10;
+        QuantityDTO quantityDTO = new QuantityDTO(quantityToIncrement);
+        BeerDTO incrementedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
         incrementedBeerDTO.setQuantity(incrementedBeerDTO.getQuantity() + quantityToIncrement);
 
-        when(beerService.increment(incrementedBeerDTO.getId(), quantityToIncrement)).thenReturn(incrementedBeerDTO);
+        when(beerService.incrementStock(incrementedBeerDTO.getId(), quantityToIncrement)).thenReturn(incrementedBeerDTO);
 
         mockMvc.perform(patch(BEER_API_URL_PATH + "/" + incrementedBeerDTO.getId() + "/increment")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJSONString(quantityToIncrement)))
+                .content(asJSONString(quantityDTO)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(asJSONString(incrementedBeerDTO)));
     }
 
     @Test
     public void whenPATCHIsCalledToIncrementGreaterThanMaxThenBadRequestStatusIsReturned() throws Exception {
-        BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
         int quantityToIncrement = 45;
+        QuantityDTO quantityDTO = new QuantityDTO(quantityToIncrement);
+        BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
         beerDTO.setQuantity(beerDTO.getQuantity() + quantityToIncrement);
 
-        doThrow(BeerStockExceededException.class).when(beerService).increment(beerDTO.getId(),
+        doThrow(BeerStockExceededException.class).when(beerService).incrementStock(beerDTO.getId(),
                 quantityToIncrement);
 
         mockMvc.perform(patch(BEER_API_URL_PATH + "/" + beerDTO.getId() + "/increment")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJSONString(quantityToIncrement)))
+                .content(asJSONString(quantityDTO)))
                 .andExpect(status().isBadRequest());
     }
 }

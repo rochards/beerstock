@@ -176,7 +176,7 @@ public class BeerServiceTest {
 
         int quantityToIncrement = 10;
         int expectedQuantityAfterIncrement = expectedBeerDTO.getQuantity() + quantityToIncrement;
-        BeerDTO incrementedBeerDTO = beerService.increment(expectedBeerDTO.getId(), quantityToIncrement);
+        BeerDTO incrementedBeerDTO = beerService.incrementStock(expectedBeerDTO.getId(), quantityToIncrement);
 
         assertThat(expectedQuantityAfterIncrement, equalTo(incrementedBeerDTO.getQuantity()));
         assertThat(expectedQuantityAfterIncrement, lessThanOrEqualTo(expectedBeerDTO.getMax()));
@@ -190,7 +190,7 @@ public class BeerServiceTest {
         Mockito.when(beerRepository.findById(expectedBeer.getId())).thenReturn(Optional.of(expectedBeer));
 
         int quantityToIncrement = 45;
-        Assertions.assertThrows(BeerStockExceededException.class, () -> beerService.increment(expectedBeerDTO.getId()
+        Assertions.assertThrows(BeerStockExceededException.class, () -> beerService.incrementStock(expectedBeerDTO.getId()
                 , quantityToIncrement));
     }
 }
