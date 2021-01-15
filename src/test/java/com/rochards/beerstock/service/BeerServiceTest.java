@@ -26,7 +26,6 @@ import static org.hamcrest.Matchers.*;
 @ExtendWith(MockitoExtension.class)
 public class BeerServiceTest {
 
-    private static final long INVALID_BEER_ID = 1L;
     private final BeerMapper beerMapper = BeerMapper.INSTANCE;
 
     @Mock
