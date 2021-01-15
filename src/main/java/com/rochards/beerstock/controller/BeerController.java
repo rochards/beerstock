@@ -1,6 +1,7 @@
 package com.rochards.beerstock.controller;
 
 import com.rochards.beerstock.dto.BeerDTO;
+import com.rochards.beerstock.dto.QuantityDTO;
 import com.rochards.beerstock.entity.Beer;
 import com.rochards.beerstock.service.BeerService;
 import lombok.AllArgsConstructor;
@@ -45,8 +46,8 @@ public class BeerController {
     }
 
     @PatchMapping("/{id}/increment")
-    public ResponseEntity<BeerDTO> incrementStock(@PathVariable Long id, @RequestBody int quantity) {
-        BeerDTO incrementedBeerDTO = beerService.increment(id, quantity);
+    public ResponseEntity<BeerDTO> incrementStock(@PathVariable Long id, @Valid @RequestBody QuantityDTO quantityDTO) {
+        BeerDTO incrementedBeerDTO = beerService.increment(id, quantityDTO.getQuantity());
         return ResponseEntity.ok(incrementedBeerDTO);
     }
 
