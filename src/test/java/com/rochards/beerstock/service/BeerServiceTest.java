@@ -5,6 +5,7 @@ import com.rochards.beerstock.dto.BeerDTO;
 import com.rochards.beerstock.entity.Beer;
 import com.rochards.beerstock.exception.type.BeerAlreadyExistException;
 import com.rochards.beerstock.exception.type.BeerNotFoundException;
+import com.rochards.beerstock.exception.type.BeerStockExceededException;
 import com.rochards.beerstock.mapper.BeerMapper;
 import com.rochards.beerstock.repository.BeerRepository;
 import org.junit.jupiter.api.Assertions;
@@ -173,11 +174,23 @@ public class BeerServiceTest {
         Mockito.when(beerRepository.findById(expectedBeer.getId())).thenReturn(Optional.of(expectedBeer));
         Mockito.when(beerRepository.save(expectedBeer)).thenReturn(expectedBeer);
 
-        int quantityToIncrement = 45;
+        int quantityToIncrement = 10;
         int expectedQuantityAfterIncrement = expectedBeerDTO.getQuantity() + quantityToIncrement;
         BeerDTO incrementedBeerDTO = beerService.increment(expectedBeerDTO.getId(), quantityToIncrement);
 
         assertThat(expectedQuantityAfterIncrement, equalTo(incrementedBeerDTO.getQuantity()));
-        assertThat(expectedQuantityAfterIncrement, lessThan(expectedBeerDTO.getMax()));
+        assertThat(expectedQuantityAfterIncrement, lessThanOrEqualTo(expectedBeerDTO.getMax()));
+    }
+
+    @Test
+    public void whenIncrementIsGreaterThanMaxThenAnExceptionShouldBeThrown() {
+        BeerDTO expectedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+        Beer expectedBeer = beerMapper.toModel(expectedBeerDTO);
+
+        Mockito.when(beerRepository.findById(expectedBeer.getId())).thenReturn(Optional.of(expectedBeer));
+
+        int quantityToIncrement = 45;
+        Assertions.assertThrows(BeerStockExceededException.class, () -> beerService.increment(expectedBeerDTO.getId()
+                , quantityToIncrement));
     }
 }
