@@ -168,4 +168,19 @@ public class BeerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void whenPATCHIsCalledToIncrementThenOkStatusIsReturned() throws Exception {
+        BeerDTO incrementedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+        int quantityToIncrement = 10;
+        incrementedBeerDTO.setQuantity(incrementedBeerDTO.getQuantity() + quantityToIncrement);
+
+        when(beerService.increment(incrementedBeerDTO.getId(), quantityToIncrement)).thenReturn(incrementedBeerDTO);
+
+        mockMvc.perform(patch(BEER_API_URL_PATH + "/" + incrementedBeerDTO.getId() + "/increment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJSONString(quantityToIncrement)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(asJSONString(incrementedBeerDTO)));
+    }
 }

@@ -44,6 +44,12 @@ public class BeerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBeer);
     }
 
+    @PatchMapping("/{id}/increment")
+    public ResponseEntity<BeerDTO> incrementStock(@PathVariable Long id, @RequestBody int quantity) {
+        BeerDTO incrementedBeerDTO = beerService.increment(id, quantity);
+        return ResponseEntity.ok(incrementedBeerDTO);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         beerService.delete(id);
