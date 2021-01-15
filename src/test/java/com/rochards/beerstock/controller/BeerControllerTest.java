@@ -186,7 +186,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    public void whenPATCHIsCalledToIncrementGreaterThanMaxThenBadRequestStatusIsReturned() throws Exception {
+    public void whenPATCHIsCalledToDecrementAndFinalQuantityIsGreaterThanMaxThenBadRequestStatusIsReturned() throws Exception {
         int quantityToIncrement = 45;
         QuantityDTO quantityDTO = new QuantityDTO(quantityToIncrement);
         BeerDTO beerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
