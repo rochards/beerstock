@@ -52,7 +52,7 @@ public class BeerService {
         beerRepository.deleteById(id);
     }
 
-    public BeerDTO increment(Long id, int quantityToIncrement) {
+    public BeerDTO incrementStock(Long id, int quantityToIncrement) {
         Optional<Beer> optBeer = beerRepository.findById(id);
         if (optBeer.isPresent()) {
             Beer beerToIncrement = optBeer.get();

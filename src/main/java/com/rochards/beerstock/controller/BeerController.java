@@ -47,7 +47,7 @@ public class BeerController {
 
     @PatchMapping("/{id}/increment")
     public ResponseEntity<BeerDTO> incrementStock(@PathVariable Long id, @Valid @RequestBody QuantityDTO quantityDTO) {
-        BeerDTO incrementedBeerDTO = beerService.increment(id, quantityDTO.getQuantity());
+        BeerDTO incrementedBeerDTO = beerService.incrementStock(id, quantityDTO.getQuantity());
         return ResponseEntity.ok(incrementedBeerDTO);
     }
 
