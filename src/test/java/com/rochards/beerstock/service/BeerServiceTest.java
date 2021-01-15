@@ -193,4 +193,20 @@ public class BeerServiceTest {
         Assertions.assertThrows(BeerStockExceededException.class, () -> beerService.incrementStock(expectedBeerDTO.getId()
                 , quantityToIncrement));
     }
+
+    @Test
+    public void whenDecrementIsCalledThenDecrementBeerStock() {
+        BeerDTO expectedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+        Beer expectedBeer = beerMapper.toModel(expectedBeerDTO);
+
+        Mockito.when(beerRepository.findById(expectedBeer.getId())).thenReturn(Optional.of(expectedBeer));
+        Mockito.when(beerRepository.save(expectedBeer)).thenReturn(expectedBeer);
+
+        int quantityToDecrement = 10;
+        int expectedQuantityAfterDecrement = expectedBeerDTO.getQuantity() - quantityToDecrement;
+        BeerDTO decrementedBeerDTO = beerService.decrementStock(expectedBeerDTO.getId(), quantityToDecrement);
+
+        assertThat(expectedQuantityAfterDecrement, equalTo(decrementedBeerDTO.getQuantity()));
+        assertThat(expectedQuantityAfterDecrement, greaterThanOrEqualTo(0));
+    }
 }
