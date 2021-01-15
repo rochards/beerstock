@@ -200,4 +200,20 @@ public class BeerControllerTest {
                 .content(asJSONString(quantityDTO)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void whenPATCHIsCalledToDecrementThenOkStatusIsReturned() throws Exception {
+        int quantityToDecrement = 10;
+        QuantityDTO quantityDTO = new QuantityDTO(quantityToDecrement);
+        BeerDTO decrementedBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+        decrementedBeerDTO.setQuantity(decrementedBeerDTO.getQuantity() - quantityToDecrement);
+
+        when(beerService.decrementStock(decrementedBeerDTO.getId(), quantityToDecrement)).thenReturn(decrementedBeerDTO);
+
+        mockMvc.perform(patch(BEER_API_URL_PATH + "/" + decrementedBeerDTO.getId() + "/decrement")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJSONString(quantityDTO)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(asJSONString(decrementedBeerDTO)));
+    }
 }

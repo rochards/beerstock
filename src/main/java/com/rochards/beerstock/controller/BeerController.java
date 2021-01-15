@@ -51,6 +51,12 @@ public class BeerController {
         return ResponseEntity.ok(incrementedBeerDTO);
     }
 
+    @PatchMapping("/{id}/decrement")
+    public ResponseEntity<BeerDTO> decrementStock(@PathVariable Long id, @Valid @RequestBody QuantityDTO quantityDTO) {
+        BeerDTO decrementedBeer = beerService.decrementStock(id, quantityDTO.getQuantity());
+        return ResponseEntity.ok(decrementedBeer);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         beerService.delete(id);
